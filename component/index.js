@@ -1,0 +1,22 @@
+new Vue({
+    el:'#app',
+    data:{
+        tables:[
+            {id:1,title:'111111'},
+            {id:2,title:'111112'},
+            {id:3,title:'111113'},
+            {id:4,title:'111114'},
+        ],
+        title:'',
+        status:false
+    },
+    methods:{
+        aa(){
+            this.status=true;
+        },
+        bb(v){
+            this.title=v;
+            this.status=false;
+        }
+    }
+})

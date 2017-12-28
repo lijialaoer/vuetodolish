@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="vue.js"></script>
+</head>
+<style>
+    ul.list>li{
+        width:600px;
+        height:30px;
+        list-style: none;
+        border-bottom:1px solid #000000;
+    }
+    ul.list>li>span{
+        display: block;
+        cursor: pointer;
+        line-height: 30px;
+    }
+    ul.list>li>span:first-of-type{
+      float:left;
+        width:10px;
+        height: 10px;
+        margin:10px 5px 0 0;
+        border:1px solid #000000;
+    }
+    ul.list>li>span:nth-of-type(2){
+        float:left;
+    }
+    ul.list>li>span:last-of-type{
+        float: right;
+    }
+   .red{
+       background:red;
+   }
+
+</style>
+<body>
+<div id="app">
+    <input type="text" v-model="con" @keydown.13="add" ref="abc">
+    <div class="btn">
+        <input type="submit" value="待完成" @click="checkstate(0)" :class="{red:status==0}">
+        <input type="submit" value="已完成" @click="checkstate(1)" :class="{red:status==1}">
+        <input type="submit" value="全部的" @click="checkstate(2)" :class="{red:status==2}">
+    </div>
+    <ul class="list">
+        <li v-for="v in datas" v-show="datas.length!=0">
+            <span @click="changes(v)" :class="{red:v.state==1}"></span>
+            <span  v-if="v.edit" @click="editor(v)">
+                 <span>{{v.title}}</span>
+            </span>
+           <span v-else>
+               <input type="text" v-model="v.title" @blur="editor(v)">
+           </span>
+            <span @click="del(v.id)">删除</span>
+        </li>
+        <li v-show="datas.length==0">NO DATA</li>
+    </ul>
+</div>
+</body>
+<script>
+
+    let obj=new Vue({
+        el:'#app',
+        data:{
+            all:[],
+            con:'',
+            status:2,
+            state:0,
+            edit:1,
+        },
+        methods:{
+            add(){
+                if(!this.con){
+                    alert('没有内容');
+                    return;
+                }
+                let a={};
+                a.title=this.con;
+                a.state=0;
+                a.edit=1;
+                a.id=Math.floor(Math.random()*100)+new Date().getTime();
+                this.all.push(a);
+                this.con='';
+                return this.all
+            },
+            del(id){
+                this.all=this.all.filter(ele=>ele.id!=id);
+            },
+            checkstate(s){
+               this.status=s;
+            },
+            changes(s){
+               if(s.state==1){
+                   s.state=0;
+               }else if(s.state==0){
+                   s.state=1;
+               }
+            },
+            editor(s){
+                if(s.edit==1){
+                    s.edit=0;
+                }else if(s.edit==0){
+                    s.edit=1;
+                }
+            }
+        },
+        computed:{
+            datas(){
+                return datas=this.all.filter(ele=>{
+                    if(this.status==2){
+                        return ele;
+                    }else{
+                        if(this.status==ele.state){
+                            return ele;
+                        }
+                    }
+                })
+            }
+        },
+        mounted(){
+            this.$refs['abc'].focus();
+        },
+        // watch:{
+        //     all(){
+        //        localStorage.list=JSON.stringify(this.all);
+        //     }
+        // }
+    })
+</script>
+</html>
